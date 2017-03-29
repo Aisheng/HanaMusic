@@ -1,6 +1,10 @@
 package com.example.aisheng.hanamusic.activity;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,15 +20,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.example.aisheng.hanamusic.R;
 import com.example.aisheng.hanamusic.adapter.MenuItemAdapter;
+import com.example.aisheng.hanamusic.dialog.CardPickerDialog;
 import com.example.aisheng.hanamusic.handler.HandlerUtil;
 import com.example.aisheng.hanamusic.service.MusicPlayer;
+import com.example.aisheng.hanamusic.uitl.ThemeHelper;
 import com.example.aisheng.hanamusic.widget.SplashScreen;
 
 import java.util.ArrayList;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements CardPickerDialog.ClickListener{
 
     private ActionBar ab;
     private ImageView barnet, barmusic, barfriends, search;
@@ -84,10 +91,10 @@ public class MainActivity extends BaseActivity {
                         drawerLayout.closeDrawers();
                         break;
                     case 2:
-//                        CardPickerDialog dialog = new CardPickerDialog();
-//                        dialog.setClickListener(MainActivity.this);
-//                        dialog.show(getSupportFragmentManager(), "theme");
-//                        drawerLayout.closeDrawers();
+                        CardPickerDialog dialog = new CardPickerDialog();
+                        dialog.setClickListener(MainActivity.this);
+                        dialog.show(getSupportFragmentManager(), "theme");
+                        drawerLayout.closeDrawers();
 
                         break;
                     case 3:
@@ -148,5 +155,31 @@ public class MainActivity extends BaseActivity {
             return super.onKeyDown(keyCode, event);
         }
 
+    }
+
+    @Override
+    public void onConfirm(int currentTheme) {
+        if (ThemeHelper.getTheme(MainActivity.this) != currentTheme) {
+            ThemeHelper.setTheme(MainActivity.this, currentTheme);
+            ThemeUtils.refreshUI(MainActivity.this, new ThemeUtils.ExtraRefreshable() {
+                        @Override
+                        public void refreshGlobal(Activity activity) {
+                            //for global setting, just do once
+                            if (Build.VERSION.SDK_INT >= 21) {
+                                final MainActivity context = MainActivity.this;
+                                ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, null, ThemeUtils.getThemeAttrColor(context, android.R.attr.colorPrimary));
+                                setTaskDescription(taskDescription);
+                                getWindow().setStatusBarColor(ThemeUtils.getColorById(context, R.color.theme_color_primary));
+                            }
+                        }
+
+                        @Override
+                        public void refreshSpecificView(View view) {
+                            //view.setBackgroundColor(Color.BLACK);
+                        }
+                    }
+            );
+        }
+        changeTheme();
     }
 }
