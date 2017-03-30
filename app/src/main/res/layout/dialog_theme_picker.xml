@@ -29,7 +29,7 @@
         android:paddingRight="?attr/dialogPreferredPadding"
         android:paddingTop="?attr/dialogPreferredPadding">
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_pink"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -44,7 +44,7 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_purple"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -59,7 +59,7 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_blue"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -74,7 +74,7 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_green"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -92,7 +92,7 @@
         android:paddingRight="?attr/dialogPreferredPadding"
         android:paddingTop="?attr/dialogPreferredPadding">
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_green_light"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -107,7 +107,7 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_yellow"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -122,7 +122,7 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_orange"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -137,7 +137,7 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/theme_red"
             android:layout_width="50dp"
             android:layout_height="50dp"

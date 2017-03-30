@@ -95,7 +95,6 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                         dialog.setClickListener(MainActivity.this);
                         dialog.show(getSupportFragmentManager(), "theme");
                         drawerLayout.closeDrawers();
-
                         break;
                     case 3:
 //                        TimingFragment fragment3 = new TimingFragment();
