@@ -5,6 +5,10 @@ import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,12 +28,16 @@ import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.example.aisheng.hanamusic.R;
 import com.example.aisheng.hanamusic.adapter.MenuItemAdapter;
 import com.example.aisheng.hanamusic.dialog.CardPickerDialog;
+import com.example.aisheng.hanamusic.fragment.MainFragment;
+import com.example.aisheng.hanamusic.fragment.TabNetPagerFragment;
 import com.example.aisheng.hanamusic.handler.HandlerUtil;
 import com.example.aisheng.hanamusic.service.MusicPlayer;
 import com.example.aisheng.hanamusic.uitl.ThemeHelper;
+import com.example.aisheng.hanamusic.widget.CustomViewPager;
 import com.example.aisheng.hanamusic.widget.SplashScreen;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity implements CardPickerDialog.ClickListener{
 
@@ -61,6 +69,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 
         setToolBar();
         setUpDrawer();
+        setViewPager();
         HandlerUtil.getInstance(this).postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -77,6 +86,57 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setTitle("");
+    }
+
+    private void setViewPager() {
+        tabs.add(barnet);
+        tabs.add(barmusic);
+        final CustomViewPager customViewPager = (CustomViewPager) findViewById(R.id.main_viewpager);
+        final MainFragment mainFragment = new MainFragment();
+        final TabNetPagerFragment tabNetPagerFragment = new TabNetPagerFragment();
+        CustomViewPagerAdapter customViewPagerAdapter = new CustomViewPagerAdapter(getSupportFragmentManager());
+        customViewPagerAdapter.addFragment(tabNetPagerFragment);
+        customViewPagerAdapter.addFragment(mainFragment);
+        customViewPager.setAdapter(customViewPagerAdapter);
+        customViewPager.setCurrentItem(1);
+        barmusic.setSelected(true);
+        customViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switchTabs(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        barnet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customViewPager.setCurrentItem(0);
+            }
+        });
+        barmusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customViewPager.setCurrentItem(1);
+            }
+        });
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(MainActivity.this, NetSearchWordsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                MainActivity.this.startActivity(intent);
+            }
+        });
     }
 
     private void setUpDrawer() {
@@ -180,5 +240,38 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
             );
         }
         changeTheme();
+    }
+
+    private void switchTabs(int position) {
+        for (int i = 0; i < tabs.size(); i++) {
+            if (position == i) {
+                tabs.get(i).setSelected(true);
+            } else {
+                tabs.get(i).setSelected(false);
+            }
+        }
+    }
+
+    static class CustomViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragments = new ArrayList<>();
+
+        public CustomViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        public void addFragment(Fragment fragment) {
+            mFragments.add(fragment);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+
     }
 }
