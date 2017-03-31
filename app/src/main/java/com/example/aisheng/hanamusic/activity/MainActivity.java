@@ -89,21 +89,20 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
     }
 
     private void setViewPager() {
-        tabs.add(barnet);
         tabs.add(barmusic);
+        tabs.add(barnet);
         final CustomViewPager customViewPager = (CustomViewPager) findViewById(R.id.main_viewpager);
         final MainFragment mainFragment = new MainFragment();
         final TabNetPagerFragment tabNetPagerFragment = new TabNetPagerFragment();
         CustomViewPagerAdapter customViewPagerAdapter = new CustomViewPagerAdapter(getSupportFragmentManager());
-        customViewPagerAdapter.addFragment(tabNetPagerFragment);
         customViewPagerAdapter.addFragment(mainFragment);
+        customViewPagerAdapter.addFragment(tabNetPagerFragment);
         customViewPager.setAdapter(customViewPagerAdapter);
-        customViewPager.setCurrentItem(1);
+        customViewPager.setCurrentItem(0);
         barmusic.setSelected(true);
         customViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -117,13 +116,14 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
             }
         });
 
-        barnet.setOnClickListener(new View.OnClickListener() {
+
+        barmusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 customViewPager.setCurrentItem(0);
             }
         });
-        barmusic.setOnClickListener(new View.OnClickListener() {
+        barnet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 customViewPager.setCurrentItem(1);

@@ -153,8 +153,10 @@ public class MainFragment extends BaseFragment {
                 ArrayList<Playlist> playlists = playlistInfo.getPlaylist();
                 ArrayList<Playlist> netPlaylists = playlistInfo.getNetPlaylist();
                 results.addAll(mList);
-                results.add(mContext.getResources().getString(R.string.created_playlists));
-                results.addAll(playlists);
+                if(playlists!=null) {
+                    results.add(mContext.getResources().getString(R.string.created_playlists));
+                    results.addAll(playlists);
+                }
                 if (netPlaylists != null) {
                     results.add("收藏的歌单");
                     results.addAll(netPlaylists);
