@@ -17,9 +17,12 @@ public class MainApplication  extends Application implements ThemeUtils.switchCo
 
     private static final String TAG = "MainApplication";
 
+    public static Context context;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        context = this;
         UnCatchException();
         ThemeUtils.setSwitchColor(this);
     }
