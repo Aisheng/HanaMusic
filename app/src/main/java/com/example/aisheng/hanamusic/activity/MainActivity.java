@@ -1,4 +1,4 @@
-package com.example.aisheng.hanamusic.activity;
+﻿package com.example.aisheng.hanamusic.activity;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -39,6 +39,7 @@ import com.example.aisheng.hanamusic.widget.SplashScreen;
 import java.util.ArrayList;
 import java.util.List;
 
+//I'm Aisheng Hello World
 public class MainActivity extends BaseActivity implements CardPickerDialog.ClickListener{
 
     private ActionBar ab;
