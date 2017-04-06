@@ -41,7 +41,5 @@ public class TabActivity extends BaseActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.tab_container, fragment);
         transaction.commitAllowingStateLoss();
-
     }
-
 }
