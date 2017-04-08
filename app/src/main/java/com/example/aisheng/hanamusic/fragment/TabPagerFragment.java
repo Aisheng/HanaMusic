@@ -114,7 +114,6 @@ public class TabPagerFragment extends AttachDialogFragment {
         adapter.addFragment(new ArtistFragment(), title[1]);
         adapter.addFragment(new AlbumFragment(), title[2]);
         adapter.addFragment(new FolderFragment(), title[3]);
-
         viewPager.setAdapter(adapter);
     }
 

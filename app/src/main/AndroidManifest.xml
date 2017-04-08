@@ -31,6 +31,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.TabActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.LocalSearchActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
