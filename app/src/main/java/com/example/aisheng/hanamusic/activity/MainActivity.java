@@ -1,4 +1,4 @@
-﻿package com.example.aisheng.hanamusic.activity;
+package com.example.aisheng.hanamusic.activity;
 
 import android.app.Activity;
 import android.app.ActivityManager;
