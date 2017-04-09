@@ -75,6 +75,16 @@ public class MusicPlayer {
         return -1;
     }
 
+    public static final long getCurrentArtistId() {
+        if (mService != null) {
+            try {
+                return mService.getArtistId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
     public static synchronized void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
         if (list == null || list.length == 0 || mService == null) {
             return;

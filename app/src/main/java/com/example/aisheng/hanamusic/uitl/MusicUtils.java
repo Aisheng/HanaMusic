@@ -149,6 +149,30 @@ public class MusicUtils implements IConstants {
         return list;
     }
 
+    /**
+     * 获取歌手信息
+     *
+     * @param context
+     * @return
+     */
+    public static List<ArtistInfo> queryArtist(Context context) {
+
+        Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+        ContentResolver cr = context.getContentResolver();
+        StringBuilder where = new StringBuilder(MediaStore.Audio.Artists._ID
+                + " in (select distinct " + MediaStore.Audio.Media.ARTIST_ID
+                + " from audio_meta where (1=1 )");
+        where.append(" and " + MediaStore.Audio.Media.SIZE + " > " + FILTER_SIZE);
+        where.append(" and " + MediaStore.Audio.Media.DURATION + " > " + FILTER_DURATION);
+
+        where.append(")");
+
+        List<ArtistInfo> list = getArtistList(cr.query(uri, proj_artist,
+                where.toString(), null, PreferencesUtility.getInstance(context).getArtistSortOrder()));
+
+        return list;
+    }
+
     public static List<ArtistInfo> getArtistList(Cursor cursor) {
         List<ArtistInfo> list = new ArrayList<>();
         while (cursor.moveToNext()) {
