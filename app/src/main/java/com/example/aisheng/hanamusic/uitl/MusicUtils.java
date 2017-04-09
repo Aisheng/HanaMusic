@@ -95,6 +95,55 @@ public class MusicUtils implements IConstants {
 
     }
 
+    /**
+     * 获取包含音频文件的文件夹信息
+     *
+     * @param context
+     * @return
+     */
+    public static List<FolderInfo> queryFolder(Context context) {
+
+        Uri uri = MediaStore.Files.getContentUri("external");
+        ContentResolver cr = context.getContentResolver();
+        StringBuilder mSelection = new StringBuilder(MediaStore.Files.FileColumns.MEDIA_TYPE
+                + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO + " and " + "("
+                + MediaStore.Files.FileColumns.DATA + " like'%.mp3' or " + MediaStore.Audio.Media.DATA
+                + " like'%.wma')");
+        // 查询语句：检索出.mp3为后缀名，时长大于1分钟，文件大小大于1MB的媒体文件
+        mSelection.append(" and " + MediaStore.Audio.Media.SIZE + " > " + FILTER_SIZE);
+        mSelection.append(" and " + MediaStore.Audio.Media.DURATION + " > " + FILTER_DURATION);
+        mSelection.append(") group by ( " + MediaStore.Files.FileColumns.PARENT);
+
+        List<FolderInfo> list = getFolderList(cr.query(uri, proj_folder, mSelection.toString(), null,
+                null));
+
+        return list;
+    }
+
+    /**
+     * 获取专辑信息
+     *
+     * @param context
+     * @return
+     */
+    public static List<AlbumInfo> queryAlbums(Context context) {
+
+        ContentResolver cr = context.getContentResolver();
+        StringBuilder where = new StringBuilder(MediaStore.Audio.Albums._ID
+                + " in (select distinct " + MediaStore.Audio.Media.ALBUM_ID
+                + " from audio_meta where (1=1)");
+        where.append(" and " + MediaStore.Audio.Media.SIZE + " > " + FILTER_SIZE);
+        where.append(" and " + MediaStore.Audio.Media.DURATION + " > " + FILTER_DURATION);
+
+        where.append(" )");
+
+        // Media.ALBUM_KEY 按专辑名称排序
+        List<AlbumInfo> list = getAlbumList(cr.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, proj_album,
+                where.toString(), null, PreferencesUtility.getInstance(context).getAlbumSortOrder()));
+        return list;
+
+    }
+
     public static ArrayList<MusicInfo> getMusicListCursor(Cursor cursor) {
         if (cursor == null) {
             return null;

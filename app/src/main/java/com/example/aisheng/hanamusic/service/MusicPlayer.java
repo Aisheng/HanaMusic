@@ -85,6 +85,49 @@ public class MusicPlayer {
         return -1;
     }
 
+    public static final String getArtistName() {
+        if (mService != null) {
+            try {
+                return mService.getArtistName();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final String getAlbumName() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumName();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final String getTrackName() {
+        if (mService != null) {
+            try {
+                return mService.getTrackName();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static String getPath() {
+        if (mService == null) {
+            return null;
+        }
+        try {
+            return mService.getPath();
+
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
     public static synchronized void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
         if (list == null || list.length == 0 || mService == null) {
             return;
