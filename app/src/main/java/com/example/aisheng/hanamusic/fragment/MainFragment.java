@@ -129,8 +129,8 @@ public class MainFragment extends BaseFragment {
             try{
                 localMusicCount = MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL).size();
                 recentMusicCount = TopTracksLoader.getCount(MainApplication.context, TopTracksLoader.QueryType.RecentSongs);
-              //  downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
-              //  artistsCount = MusicUtils.queryArtist(mContext).size();
+              // downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
+                artistsCount = MusicUtils.queryArtist(mContext).size();
             }catch (Exception e){
                 e.printStackTrace();
             }

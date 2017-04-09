@@ -59,7 +59,6 @@ public class MusicFragment extends BaseFragment {
         //setUservisibleHint 可能先与attach
         if (view == null && mContext != null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.recylerview, frameLayout, false);
-
             dialogText = (TextView) view.findViewById(R.id.dialog_text);
             recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
             layoutManager = new LinearLayoutManager(mContext);
@@ -67,7 +66,6 @@ public class MusicFragment extends BaseFragment {
             mAdapter = new Adapter(null);
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
-            //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
             recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
 
             sideBar = (SideBar) view.findViewById(R.id.sidebar);
@@ -205,7 +203,6 @@ public class MusicFragment extends BaseFragment {
                 mPreferences.setSongSortOrder(SortOrder.SongSortOrder.SONG_ALBUM);
                 reloadAdapter();
                 return true;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -251,12 +248,8 @@ public class MusicFragment extends BaseFragment {
         Handler handler;
 
         public Adapter(ArrayList<MusicInfo> list) {
-//            if (list == null) {
-//                throw new IllegalArgumentException("model Data must not be null");
-//            }
             handler = HandlerUtil.getInstance(mContext);
             mList = list;
-
         }
 
         //更新adpter的数据
@@ -278,7 +271,6 @@ public class MusicFragment extends BaseFragment {
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
-
         }
 
         //将数据与界面进行绑定
@@ -336,7 +328,6 @@ public class MusicFragment extends BaseFragment {
             }
 
             public void onClick(View v) {
-                //// TODO: 2016/1/20
                 if(playMusic != null)
                     handler.removeCallbacks(playMusic);
                 if(getAdapterPosition() > -1){
@@ -344,7 +335,6 @@ public class MusicFragment extends BaseFragment {
                     handler.postDelayed(playMusic,70);
                 }
             }
-
         }
 
 
@@ -354,14 +344,12 @@ public class MusicFragment extends BaseFragment {
             TextView mainTitle, title;
             TintImageView playState;
 
-
             ListItemViewHolder(View view) {
                 super(view);
                 this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
                 this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
                 this.playState = (TintImageView) view.findViewById(R.id.play_state);
                 this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
-
 
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
