@@ -31,6 +31,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.PlayingActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.example.aisheng.hanamusic.LAUNCH_NOW_PLAYING_ACTION" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.TabActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.LocalSearchActivity"
