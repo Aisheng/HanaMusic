@@ -33,7 +33,6 @@ public class PlaylistInfo {
     }
 
     public synchronized ArrayList<Playlist> getPlaylist() {
-
         return null;
     }
 

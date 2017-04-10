@@ -2,16 +2,23 @@ package com.example.aisheng.hanamusic.service;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.aisheng.hanamusic.MediaAidlInterface;
+import com.example.aisheng.hanamusic.R;
 import com.example.aisheng.hanamusic.info.MusicInfo;
 
 import java.util.Arrays;
@@ -65,24 +72,173 @@ public class MusicPlayer {
         }
     }
 
-    public static final long getCurrentAudioId() {
-        if (mService != null) {
-            try {
-                return mService.getAudioId();
-            } catch (final RemoteException ignored) {
-            }
-        }
-        return -1;
+    public static final boolean isPlaybackServiceConnected() {
+        return mService != null;
     }
 
-    public static final long getCurrentArtistId() {
+    public static void next() {
+        try {
+            if (mService != null) {
+                mService.next();
+            }
+        } catch (final RemoteException ignored) {
+        }
+    }
+
+    public static void initPlaybackServiceWithSettings(final Context context) {
+        setShowAlbumArtOnLockscreen(true);
+    }
+
+    public static void setShowAlbumArtOnLockscreen(final boolean enabled) {
+        try {
+            if (mService != null) {
+                mService.setLockscreenAlbumArt(enabled);
+            }
+        } catch (final RemoteException ignored) {
+        }
+    }
+
+    public static void asyncNext(final Context context) {
+        final Intent previous = new Intent(context, MediaService.class);
+        previous.setAction(MediaService.NEXT_ACTION);
+        context.startService(previous);
+    }
+
+    public static void previous(final Context context, final boolean force) {
+        final Intent previous = new Intent(context, MediaService.class);
+        if (force) {
+            previous.setAction(MediaService.PREVIOUS_FORCE_ACTION);
+        } else {
+            previous.setAction(MediaService.PREVIOUS_ACTION);
+        }
+        context.startService(previous);
+    }
+
+    public static void playOrPause() {
+        try {
+            if (mService != null) {
+                if (mService.isPlaying()) {
+                    mService.pause();
+                } else {
+                    mService.play();
+                }
+            }
+        } catch (final Exception ignored) {
+        }
+    }
+
+
+    public static boolean isTrackLocal() {
+        try {
+            if (mService != null) {
+                return mService.isTrackLocal();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void cycleRepeat() {
+        try {
+            if (mService != null) {
+                if (mService.getShuffleMode() == MediaService.SHUFFLE_NORMAL) {
+                    mService.setShuffleMode(MediaService.SHUFFLE_NONE);
+                    mService.setRepeatMode(MediaService.REPEAT_CURRENT);
+                    return;
+                } else {
+
+                    switch (mService.getRepeatMode()) {
+                        case MediaService.REPEAT_CURRENT:
+                            mService.setRepeatMode(MediaService.REPEAT_ALL);
+                            break;
+                        case MediaService.REPEAT_ALL:
+                            mService.setShuffleMode(MediaService.SHUFFLE_NORMAL);
+//                        if (mService.getShuffleMode() != MediaService.SHUFFLE_NONE) {
+//                            mService.setShuffleMode(MediaService.SHUFFLE_NONE);
+//                        }
+                            break;
+
+                    }
+                }
+
+            }
+        } catch (final RemoteException ignored) {
+        }
+    }
+
+    public static void cycleShuffle() {
+        try {
+            if (mService != null) {
+                switch (mService.getShuffleMode()) {
+                    case MediaService.SHUFFLE_NONE:
+                        mService.setShuffleMode(MediaService.SHUFFLE_NORMAL);
+                        if (mService.getRepeatMode() == MediaService.REPEAT_CURRENT) {
+                            mService.setRepeatMode(MediaService.REPEAT_ALL);
+                        }
+                        break;
+                    case MediaService.SHUFFLE_NORMAL:
+                        mService.setShuffleMode(MediaService.SHUFFLE_NONE);
+                        break;
+//                    case MediaService.SHUFFLE_AUTO:
+//                        mService.setShuffleMode(MediaService.SHUFFLE_NONE);
+//                        break;
+                    default:
+                        break;
+                }
+            }
+        } catch (final RemoteException ignored) {
+        }
+    }
+
+    public static final boolean isPlaying() {
         if (mService != null) {
             try {
-                return mService.getArtistId();
+                return mService.isPlaying();
             } catch (final RemoteException ignored) {
             }
         }
-        return -1;
+        return false;
+    }
+
+    public static final int getShuffleMode() {
+        if (mService != null) {
+            try {
+                return mService.getShuffleMode();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return 0;
+    }
+
+    public static void setShuffleMode(int mode) {
+        try {
+            if (mService != null) {
+                mService.setShuffleMode(mode);
+            }
+        } catch (RemoteException ignored) {
+
+        }
+    }
+
+    public static final int getRepeatMode() {
+        if (mService != null) {
+            try {
+                return mService.getRepeatMode();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return 0;
+    }
+
+    public static final String getTrackName() {
+        if (mService != null) {
+            try {
+                return mService.getTrackName();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
     }
 
     public static final String getArtistName() {
@@ -105,27 +261,227 @@ public class MusicPlayer {
         return null;
     }
 
-    public static final String getTrackName() {
+    public static final String getAlbumPath() {
         if (mService != null) {
             try {
-                return mService.getTrackName();
+                return mService.getAlbumPath();
             } catch (final RemoteException ignored) {
             }
         }
         return null;
     }
 
-    public static String getPath() {
-        if (mService == null) {
-            return null;
-        }
-        try {
-            return mService.getPath();
-
-        } catch (Exception e) {
-
+    public static final String[] getAlbumPathAll() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumPathtAll();
+            } catch (final RemoteException ignored) {
+            }
         }
         return null;
+    }
+
+    public static final long getCurrentAlbumId() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final long getCurrentAudioId() {
+        if (mService != null) {
+            try {
+                return mService.getAudioId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final MusicTrack getCurrentTrack() {
+        if (mService != null) {
+            try {
+                return mService.getCurrentTrack();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final MusicTrack getTrack(int index) {
+        if (mService != null) {
+            try {
+                return mService.getTrack(index);
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final long getNextAudioId() {
+        if (mService != null) {
+            try {
+                return mService.getNextAudioId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final long getPreviousAudioId() {
+        if (mService != null) {
+            try {
+                return mService.getPreviousAudioId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final long getCurrentArtistId() {
+        if (mService != null) {
+            try {
+                return mService.getArtistId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final int getAudioSessionId() {
+        if (mService != null) {
+            try {
+                return mService.getAudioSessionId();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final long[] getQueue() {
+        try {
+            if (mService != null) {
+                return mService.getQueue();
+            } else {
+            }
+        } catch (final RemoteException ignored) {
+        }
+        return sEmptyList;
+    }
+
+    public static final HashMap<Long, MusicInfo> getPlayinfos() {
+        try {
+            if (mService != null) {
+                return (HashMap<Long, MusicInfo>) mService.getPlayinfos();
+            } else {
+            }
+        } catch (final RemoteException ignored) {
+        }
+        return null;
+    }
+
+    public static final long getQueueItemAtPosition(int position) {
+        try {
+            if (mService != null) {
+                return mService.getQueueItemAtPosition(position);
+            } else {
+            }
+        } catch (final RemoteException ignored) {
+        }
+        return -1;
+    }
+
+    public static final int getQueueSize() {
+        try {
+            if (mService != null) {
+                return mService.getQueueSize();
+            } else {
+            }
+        } catch (final RemoteException ignored) {
+        }
+        return 0;
+    }
+
+    public static final int getQueuePosition() {
+        try {
+            if (mService != null) {
+                return mService.getQueuePosition();
+            }
+        } catch (final RemoteException ignored) {
+        }
+        return 0;
+    }
+
+    public static void setQueuePosition(final int position) {
+        if (mService != null) {
+            try {
+                mService.setQueuePosition(position);
+            } catch (final RemoteException ignored) {
+            }
+        }
+    }
+
+    public static final int getQueueHistorySize() {
+        if (mService != null) {
+            try {
+                return mService.getQueueHistorySize();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return 0;
+    }
+
+    public static final int getQueueHistoryPosition(int position) {
+        if (mService != null) {
+            try {
+                return mService.getQueueHistoryPosition(position);
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return -1;
+    }
+
+    public static final int[] getQueueHistoryList() {
+        if (mService != null) {
+            try {
+                return mService.getQueueHistoryList();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final int removeTrack(final long id) {
+        try {
+            if (mService != null) {
+                return mService.removeTrack(id);
+            }
+        } catch (final RemoteException ingored) {
+        }
+        return 0;
+    }
+
+    public static final boolean removeTrackAtPosition(final long id, final int position) {
+        try {
+            if (mService != null) {
+                return mService.removeTrackAtPosition(id, position);
+            }
+        } catch (final RemoteException ingored) {
+        }
+        return false;
+    }
+
+    public static void moveQueueItem(final int from, final int to) {
+        try {
+            if (mService != null) {
+                mService.moveQueueItem(from, to);
+            } else {
+            }
+        } catch (final RemoteException ignored) {
+        }
     }
 
     public static synchronized void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
@@ -165,38 +521,277 @@ public class MusicPlayer {
         }
     }
 
-    public static final int getQueuePosition() {
+    public static void playNext(Context context, final HashMap<Long, MusicInfo> map, final long[] list) {
+        if (mService == null) {
+            return;
+        }
         try {
-            if (mService != null) {
-                return mService.getQueuePosition();
+            int current = -1;
+            long[] result = list;
+
+            for (int i = 0; i < list.length; i++) {
+                if (MusicPlayer.getCurrentAudioId() == list[i]) {
+                    current = i;
+                } else {
+                    MusicPlayer.removeTrack(list[i]);
+                }
             }
+
+//            if( current != -1){
+//                ArrayList lists = new ArrayList();
+//                for(int i = 0; i<list.length;i++){
+//                    if(i != current){
+//                        lists.add(list[i]);
+//                    }
+//                }
+//                result = new long[list.length - 1];
+//                for(int i = 0;i<lists.size();i++){
+//                     result[i] = (long) lists.get(i);
+//                }
+//            }
+
+            mService.enqueue(list, map, MediaService.NEXT);
+
+            Toast.makeText(context, R.string.next_play, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {
+        }
+    }
+
+    public static String getPath() {
+        if (mService == null) {
+            return null;
+        }
+        try {
+            return mService.getPath();
+
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public static void stop() {
+        try {
+            mService.stop();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static final int getSongCountForAlbumInt(final Context context, final long id) {
+        int songCount = 0;
+        if (id == -1) {
+            return songCount;
+        }
+
+        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, id);
+        Cursor cursor = context.getContentResolver().query(uri,
+                new String[]{MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS}, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                if (!cursor.isNull(0)) {
+                    songCount = cursor.getInt(0);
+                }
+            }
+            cursor.close();
+            cursor = null;
+        }
+
+        return songCount;
+    }
+
+    public static final String getReleaseDateForAlbum(final Context context, final long id) {
+        if (id == -1) {
+            return null;
+        }
+        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, id);
+        Cursor cursor = context.getContentResolver().query(uri, new String[]{
+                MediaStore.Audio.AlbumColumns.FIRST_YEAR
+        }, null, null, null);
+        String releaseDate = null;
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                releaseDate = cursor.getString(0);
+            }
+            cursor.close();
+            cursor = null;
+        }
+        return releaseDate;
+    }
+
+    public static void seek(final long position) {
+        if (mService != null) {
+            try {
+                mService.seek(position);
+            } catch (final RemoteException ignored) {
+            }
+        }
+    }
+
+    public static void seekRelative(final long deltaInMs) {
+        if (mService != null) {
+            try {
+                mService.seekRelative(deltaInMs);
+            } catch (final RemoteException ignored) {
+            } catch (final IllegalStateException ignored) {
+
+            }
+        }
+    }
+
+    public static final long position() {
+        if (mService != null) {
+            try {
+                return mService.position();
+            } catch (final RemoteException ignored) {
+            } catch (final IllegalStateException ex) {
+
+            }
         }
         return 0;
     }
 
-    public static final long[] getQueue() {
-        try {
-            if (mService != null) {
-                return mService.getQueue();
-            } else {
+    public static final int secondPosition() {
+        if (mService != null) {
+            try {
+                return mService.secondPosition();
+            } catch (final RemoteException ignored) {
+            } catch (final IllegalStateException ex) {
+
             }
+        }
+        return 0;
+    }
+
+    public static final long duration() {
+        if (mService != null) {
+            try {
+                return mService.duration();
+            } catch (final RemoteException ignored) {
+            } catch (final IllegalStateException ignored) {
+
+            }
+        }
+        return 0;
+    }
+
+    public static void clearQueue() {
+
+        try {
+            if(mService != null)
+                mService.removeTracks(0, Integer.MAX_VALUE);
         } catch (final RemoteException ignored) {
         }
-        return sEmptyList;
     }
 
-
-    public static void initPlaybackServiceWithSettings(final Context context) {
-        setShowAlbumArtOnLockscreen(true);
-    }
-
-    public static void setShowAlbumArtOnLockscreen(final boolean enabled) {
+    public static void addToQueue(final Context context, final long[] list, long sourceId) {
+        if (mService == null) {
+            return;
+        }
         try {
-            if (mService != null) {
-                mService.setLockscreenAlbumArt(enabled);
-            }
+            mService.enqueue(list, null, MediaService.LAST);
+            //final String message = makeLabel(context, R.plurals.NNNtrackstoqueue, list.length);
+            //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {
+        }
+    }
+
+
+    public static void addToPlaylist(final Context context, final long[] ids, final long playlistid) {
+        final int size = ids.length;
+        final ContentResolver resolver = context.getContentResolver();
+        final String[] projection = new String[]{
+                "max(" + "play_order" + ")",
+        };
+        final Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistid);
+        Cursor cursor = null;
+        int base = 0;
+
+        try {
+            cursor = resolver.query(uri, projection, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                base = cursor.getInt(0) + 1;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+                cursor = null;
+            }
+        }
+
+        int numinserted = 0;
+        for (int offSet = 0; offSet < size; offSet += 1000) {
+            makeInsertItems(ids, offSet, 1000, base);
+            numinserted += resolver.bulkInsert(uri, mContentValuesCache);
+        }
+
+    }
+
+    public static void makeInsertItems(final long[] ids, final int offset, int len, final int base) {
+        if (offset + len > ids.length) {
+            len = ids.length - offset;
+        }
+
+        if (mContentValuesCache == null || mContentValuesCache.length != len) {
+            mContentValuesCache = new ContentValues[len];
+        }
+        for (int i = 0; i < len; i++) {
+            if (mContentValuesCache[i] == null) {
+                mContentValuesCache[i] = new ContentValues();
+            }
+            mContentValuesCache[i].put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, base + offset + i);
+            mContentValuesCache[i].put(MediaStore.Audio.Playlists.Members.AUDIO_ID, ids[offset + i]);
+        }
+    }
+
+    public static final long createPlaylist(final Context context, final String name) {
+        if (name != null && name.length() > 0) {
+            final ContentResolver resolver = context.getContentResolver();
+            final String[] projection = new String[]{
+                    MediaStore.Audio.PlaylistsColumns.NAME
+            };
+            final String selection = MediaStore.Audio.PlaylistsColumns.NAME + " = '" + name + "'";
+            Cursor cursor = resolver.query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+                    projection, selection, null, null);
+            if (cursor.getCount() <= 0) {
+                final ContentValues values = new ContentValues(1);
+                values.put(MediaStore.Audio.PlaylistsColumns.NAME, name);
+                final Uri uri = resolver.insert(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+                        values);
+                return Long.parseLong(uri.getLastPathSegment());
+            }
+            if (cursor != null) {
+                cursor.close();
+                cursor = null;
+            }
+            return -1;
+        }
+        return -1;
+    }
+
+    public static void exitService() {
+//        if (mService == null) {
+//            return;
+//        }
+        try {
+            mConnectionMap.clear();
+            Log.e("exitmp", "Destroying service");
+            mService.exit();
+        } catch (Exception e) {
+        }
+    }
+
+    public static void timing(int time) {
+        if (mService == null) {
+            return;
+        }
+        try {
+            mService.timing(time);
+        } catch (Exception e) {
+
         }
     }
 
@@ -235,4 +830,5 @@ public class MusicPlayer {
             mWrappedContext = context;
         }
     }
+
 }
