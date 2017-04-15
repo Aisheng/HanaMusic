@@ -47,10 +47,8 @@ public class MusicPlayer {
         }
         final ContextWrapper contextWrapper = new ContextWrapper(realActivity);
         contextWrapper.startService(new Intent(contextWrapper, MediaService.class));
-        final ServiceBinder binder = new ServiceBinder(callback,
-                contextWrapper.getApplicationContext());
-        if (contextWrapper.bindService(
-                new Intent().setClass(contextWrapper, MediaService.class), binder, 0)) {
+        final ServiceBinder binder = new ServiceBinder(callback, contextWrapper.getApplicationContext());
+        if (contextWrapper.bindService(new Intent().setClass(contextWrapper, MediaService.class), binder, Context.BIND_AUTO_CREATE)) {
             mConnectionMap.put(contextWrapper, binder);
             return new ServiceToken(contextWrapper);
         }

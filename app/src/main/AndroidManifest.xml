@@ -43,6 +43,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.LocalSearchActivity"
             android:screenOrientation="portrait"/>
+
+        <service
+            android:name=".service.MediaService"
+            android:process=":main" />
     </application>
 
 </manifest>
