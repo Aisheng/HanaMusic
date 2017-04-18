@@ -25,7 +25,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
-
+/**
+ * Created by Aisheng on 2017/3/29.
+ */
 public class MusicPlayer {
 
     private static final WeakHashMap<Context, ServiceBinder> mConnectionMap;
