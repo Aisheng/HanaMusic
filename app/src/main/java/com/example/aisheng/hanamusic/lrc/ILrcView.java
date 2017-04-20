@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/4/10.
+ * Created by Aisheng on 2017/4/10.
  */
 public interface ILrcView {
 

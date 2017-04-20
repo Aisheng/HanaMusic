@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 每行歌词的实体类，实现了Comparable接口，方便List<LrcRow>的sort排序
  *
- * Created by Administrator on 2017/4/10.
+ * Created by Aisheng on 2017/4/10.
  */
 public class LrcRow implements Comparable<LrcRow> {
 

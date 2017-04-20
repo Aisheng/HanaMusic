@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 默认的歌词解析器
  *
- * Created by Administrator on 2017/4/10.
+ * Created by Aisheng on 2017/4/10.
  */
 public class DefaultLrcParser implements ILrcParser {
 
