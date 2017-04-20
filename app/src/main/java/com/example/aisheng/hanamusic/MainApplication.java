@@ -2,12 +2,14 @@ package com.example.aisheng.hanamusic;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.util.Log;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
+import com.example.aisheng.hanamusic.permissions.Nammu;
 import com.example.aisheng.hanamusic.uitl.IConstants;
 import com.example.aisheng.hanamusic.uitl.ThemeHelper;
 import com.facebook.cache.disk.DiskCacheConfig;
@@ -43,6 +45,9 @@ public class MainApplication  extends Application implements ThemeUtils.switchCo
         frescoInit();
         super.onCreate();
         context = this;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Nammu.init(this);
+        }
         UnCatchException();
         ThemeUtils.setSwitchColor(this);
     }
