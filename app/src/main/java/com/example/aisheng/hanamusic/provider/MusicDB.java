@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.example.aisheng.hanamusic.recent.SongPlayCount;
 
 /**
- * Created by Administrator on 2017/3/31.
+ * Created by Aisheng on 2017/3/31.
  */
 public class MusicDB  extends SQLiteOpenHelper {
 

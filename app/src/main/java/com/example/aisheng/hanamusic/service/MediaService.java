@@ -380,7 +380,6 @@ public class MediaService extends Service {
         filter.addAction(LOCK_SCREEN);
         filter.addAction(SEND_PROGRESS);
         filter.addAction(SETQUEUE);
-        // Attach the broadcast listener
         registerReceiver(mIntentReceiver, filter);
 
         mMediaStoreObserver = new MediaStoreObserver(mPlayerHandler);
@@ -724,11 +723,6 @@ public class MediaService extends Service {
         if (goToIdle) {
             setIsSupposedToBePlaying(false, false);
         }
-// else {
-//            if (CommonUtils.isLollipop())
-//                stopForeground(false);
-//            else stopForeground(true);
-//        }
     }
 
     private int removeTracksInternal(int first, int last) {
@@ -1321,9 +1315,6 @@ public class MediaService extends Service {
         final Intent musicIntent = new Intent(intent);
         musicIntent.setAction(what.replace(TIMBER_PACKAGE_NAME, MUSIC_PACKAGE_NAME));
         sendStickyBroadcast(musicIntent);
-//        if (what.equals(TRACK_PREPARED)) {
-//            return;
-//        }
 
         if (what.equals(META_CHANGED)) {
 
@@ -1628,10 +1619,6 @@ public class MediaService extends Service {
                 openCurrentAndNext();
             }
 
-//            if (!mPlayer.isInitialized() && isTrackLocal()) {
-//                mPlaylist.clear();
-//                return;
-//            }
             final long seekpos = mPreferences.getLong("seekpos", 0);
             mLastSeekPos = seekpos;
             seek(seekpos >= 0 && seekpos < duration() ? seekpos : 0);
