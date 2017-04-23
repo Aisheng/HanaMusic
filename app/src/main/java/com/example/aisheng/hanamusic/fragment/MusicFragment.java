@@ -296,7 +296,6 @@ public class MusicFragment extends BaseFragment {
 
             } else if (holder instanceof CommonItemViewHolder) {
                 ((CommonItemViewHolder) holder).textView.setText("(共" + mList.size() + "首)");
-
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -359,7 +358,6 @@ public class MusicFragment extends BaseFragment {
                     }
                 });
                 view.setOnClickListener(this);
-
             }
 
             @Override

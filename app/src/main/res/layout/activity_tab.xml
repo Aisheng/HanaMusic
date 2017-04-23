@@ -14,7 +14,4 @@
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"
         android:layout_height="50dp" />
-
-    <!--<include layout="@layout/bottom_nav"/>-->
-
 </RelativeLayout>

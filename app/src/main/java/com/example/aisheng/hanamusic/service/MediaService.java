@@ -2,6 +2,7 @@ package com.example.aisheng.hanamusic.service;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -97,6 +98,7 @@ import java.util.TreeSet;
 /**
  * Created by Administrator on 2017/3/29.
  */
+@SuppressLint("NewApi")
 public class MediaService extends Service {
 
     public static final String PLAYSTATE_CHANGED = "com.example.aisheng.hanamusic.playstatechanged";
@@ -815,10 +817,7 @@ public class MediaService extends Service {
         }
     }
 
-
     private void updateCursor(final long trackId) {
-
-
         MusicInfo info = mPlaylistInfo.get(trackId);
         if (mPlaylistInfo.get(trackId) != null) {
             MatrixCursor cursor = new MatrixCursor(PROJECTION);
@@ -2918,7 +2917,6 @@ public class MediaService extends Service {
         };
 
         Runnable startMediaPlayerIfPrepared = new Runnable() {
-
             @Override
             public void run() {
                 if (D) Log.d(TAG, "mIsTrackPrepared, " + mIsTrackPrepared);

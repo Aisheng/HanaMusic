@@ -53,7 +53,6 @@ public class TabPagerFragment extends AttachDialogFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // mPreferences = PreferencesUtility.getInstance(mContext);
         if (getArguments() != null) {
             page = getArguments().getInt("page_number");
             title = getArguments().getStringArray("title");
@@ -88,23 +87,16 @@ public class TabPagerFragment extends AttachDialogFragment {
                 mContext.startActivity(intent);
             }
         });
-
-
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         if (viewPager != null) {
             setupViewPager(viewPager);
             viewPager.setOffscreenPageLimit(3);
         }
-
         final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
-
         tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
-
-
         return rootView;
-
     }
 
 
