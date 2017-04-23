@@ -53,12 +53,13 @@ public class AlbumViewPager extends ViewPager {
         }
     }
 
-    public interface OnSingleTouchListener {
+    public interface OnSingleTouchListener
+    {
         public void onSingleTouch(View v);
     }
 
-    public void setOnSingleTouchListener(
-            OnSingleTouchListener onSingleTouchListener) {
+    public void setOnSingleTouchListener(OnSingleTouchListener onSingleTouchListener)
+    {
         this.onSingleTouchListener = onSingleTouchListener;
     }
 }

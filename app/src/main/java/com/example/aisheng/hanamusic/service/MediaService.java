@@ -969,8 +969,6 @@ public class MediaService extends Service {
                     e.printStackTrace();
                 }
             }
-
-
         }
     }
 

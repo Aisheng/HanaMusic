@@ -668,7 +668,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             if (position == MusicPlayer.getQueue().length + 1 || position == 0) {
                 return RoundFragment.newInstance("");
             }
-            // return RoundFragment.newInstance(MusicPlayer.getQueue()[position - 1]);
             return RoundFragment.newInstance(MusicPlayer.getAlbumPathAll()[position - 1]);
         }
 

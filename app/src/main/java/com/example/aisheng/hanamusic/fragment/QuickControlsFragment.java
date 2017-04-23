@@ -42,19 +42,16 @@ public class QuickControlsFragment extends BaseFragment {
 
         @Override
         public void run() {
-
             long position = MusicPlayer.position();
             long duration = MusicPlayer.duration();
             if (duration > 0 && duration < 627080716){
                 mProgress.setProgress((int) (1000 * position / duration));
             }
-
             if (MusicPlayer.isPlaying()) {
                 mProgress.postDelayed(mUpdateProgress, 50);
             }else {
                 mProgress.removeCallbacks(mUpdateProgress);
             }
-
         }
     };
     private TintImageView mPlayPause;
@@ -105,15 +102,13 @@ public class QuickControlsFragment extends BaseFragment {
                         }
                     }, 60);
                 }
-
             }
         });
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                HandlerUtil.getInstance(MainApplication.context).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         MusicPlayer.next();
@@ -126,8 +121,7 @@ public class QuickControlsFragment extends BaseFragment {
         playQueue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                HandlerUtil.getInstance(MainApplication.context).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         PlayQueueFragment playQueueFragment = new PlayQueueFragment();

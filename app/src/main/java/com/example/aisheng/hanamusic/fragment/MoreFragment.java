@@ -409,69 +409,70 @@ public class MoreFragment extends AttachDialogFragment {
             recyclerView.setAdapter(muaicflowAdapter);
             return;
         }
-
-        commonAdapter.setOnItemClickListener(new OverFlowAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, String data) {
-                switch (Integer.parseInt(data)) {
-                    case 0:
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
-                                int len = list.size();
-                                long[] listid = new long[len];
-                                for (int i = 0; i < len; i++) {
-                                    MusicInfo info = list.get(i);
-                                    listid[i] = info.songId;
-                                    infos.put(listid[i], info);
-                                }
-
-                                MusicPlayer.playAll(infos, listid, 0, false);
-                            }
-                        }, 60);
-                        dismiss();
-                        break;
-                    case 1:
-                        AddNetPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
-
-                        dismiss();
-                        break;
-                    case 2:
-
-                        new AsyncTask<Void, Void, Void>() {
-
-                            @Override
-                            protected Void doInBackground(Void... params) {
-                                for (MusicInfo music : list) {
-
-                                    if (MusicPlayer.getCurrentAudioId() == music.songId) {
-                                        if (MusicPlayer.getQueueSize() == 0) {
-                                            MusicPlayer.stop();
-                                        } else {
-                                            MusicPlayer.next();
-                                        }
-
+        if(commonAdapter!=null) {
+            commonAdapter.setOnItemClickListener(new OverFlowAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onItemClick(View view, String data) {
+                    switch (Integer.parseInt(data)) {
+                        case 0:
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                                    int len = list.size();
+                                    long[] listid = new long[len];
+                                    for (int i = 0; i < len; i++) {
+                                        MusicInfo info = list.get(i);
+                                        listid[i] = info.songId;
+                                        infos.put(listid[i], info);
                                     }
-                                    Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
-                                    mContext.getContentResolver().delete(uri, null, null);
-                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
+
+                                    MusicPlayer.playAll(infos, listid, 0, false);
                                 }
-                                return null;
-                            }
+                            }, 60);
+                            dismiss();
+                            break;
+                        case 1:
+                            AddNetPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
 
-                            @Override
-                            protected void onPostExecute(Void v) {
-                                mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
-                            }
+                            dismiss();
+                            break;
+                        case 2:
 
-                        }.execute();
-                        dismiss();
-                        break;
+                            new AsyncTask<Void, Void, Void>() {
+
+                                @Override
+                                protected Void doInBackground(Void... params) {
+                                    for (MusicInfo music : list) {
+
+                                        if (MusicPlayer.getCurrentAudioId() == music.songId) {
+                                            if (MusicPlayer.getQueueSize() == 0) {
+                                                MusicPlayer.stop();
+                                            } else {
+                                                MusicPlayer.next();
+                                            }
+
+                                        }
+                                        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
+                                        mContext.getContentResolver().delete(uri, null, null);
+                                        PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
+                                    }
+                                    return null;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Void v) {
+                                    mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                                }
+
+                            }.execute();
+                            dismiss();
+                            break;
+                    }
                 }
-            }
-        });
-        recyclerView.setAdapter(commonAdapter);
+            });
+            recyclerView.setAdapter(commonAdapter);
+        }
     }
 
     //设置音乐overflow条目

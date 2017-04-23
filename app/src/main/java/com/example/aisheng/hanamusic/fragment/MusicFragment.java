@@ -336,7 +336,6 @@ public class MusicFragment extends BaseFragment {
             }
         }
 
-
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
             ImageView moreOverflow;
