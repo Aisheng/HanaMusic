@@ -36,6 +36,11 @@ import com.example.aisheng.hanamusic.widget.SplashScreen;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Aisheng on 2017/3/29.
+ * MainActivity
+ */
+
 public class MainActivity extends BaseActivity implements CardPickerDialog.ClickListener{
 
     private ActionBar ab;
