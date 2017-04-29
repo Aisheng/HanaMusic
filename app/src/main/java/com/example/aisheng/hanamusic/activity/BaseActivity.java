@@ -27,6 +27,7 @@ import static com.example.aisheng.hanamusic.service.MusicPlayer.mService;
 /**
  * Created by Aisheng on 2017/3/29.
  * Activity基类
+ * 
  */
 
 public class BaseActivity extends AppCompatActivity implements ServiceConnection {
