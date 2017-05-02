@@ -347,6 +347,48 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
     };
 
+    public void updateLrc() {
+        List<LrcRow> list = getLrcRows();
+        if (list != null && list.size() > 0) {
+            mTryGetLrc.setVisibility(View.INVISIBLE);
+            mLrcView.setLrcRows(list);
+        } else {
+            mTryGetLrc.setVisibility(View.VISIBLE);
+            mLrcView.reset();
+        }
+    }
+
+    public void updateTrack() {
+        mHandler.removeCallbacks(mUpAlbumRunnable);
+        if(MusicPlayer.getCurrentAlbumId() != lastAlbum)
+            mHandler.postDelayed(mUpAlbumRunnable, 1600);
+
+
+        isFav = false;
+        long[] favlists = mPlaylistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
+        long currentid = MusicPlayer.getCurrentAudioId();
+        for (long i : favlists) {
+            if (currentid == i) {
+                isFav = true;
+                break;
+            }
+        }
+        updateFav(isFav);
+        updateLrc();
+
+
+        ab.setTitle(MusicPlayer.getTrackName());
+        ab.setSubtitle(MusicPlayer.getArtistName());
+        mDuration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
+    }
+
+    private void updateFav(boolean b) {
+        if (b) {
+            mFav.setImageResource(R.drawable.play_icn_loved);
+        } else {
+            mFav.setImageResource(R.drawable.play_rdi_icn_love);
+        }
+    }
 
     private List<LrcRow> getLrcRows() {
 
@@ -354,7 +396,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         InputStream is = null;
         try {
             is = new FileInputStream(Environment.getExternalStorageDirectory().getAbsolutePath() +
-                    "/remusic/lrc/" + MusicPlayer.getCurrentAudioId());
+                    "/hanamusic/lrc/" + MusicPlayer.getCurrentAudioId());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.example.aisheng.hanamusic.uitl.L;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -40,6 +41,10 @@ import okio.Okio;
 public class HttpUtil {
 
     public  static final OkHttpClient mOkHttpClient = new OkHttpClient();
+
+    public static final String TAG = "HttpUtil";
+
+    public static final boolean D = true;
 
 
     public static void getOut(final String url) {
@@ -260,34 +265,28 @@ public class HttpUtil {
 
 
     public static JsonObject getResposeJsonObject(String action1) {
+        L.E(D,TAG, "getResposeJsonObject" + action1);
         try {
             mOkHttpClient.setConnectTimeout(3000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(3000, TimeUnit.MINUTES);
             Request request = new Request.Builder()
                     .url(action1)
-//                    .addHeader("Referer","http://music.163.com/")
-//                    .addHeader("Cookie", "appver=1.5.0.75771")
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 String c = response.body().string();
-//                FileOutputStream fileOutputStream = new FileOutputStream("/sdcard/" + System.currentTimeMillis() + ".txt");
-//                fileOutputStream.write(c.getBytes());
-//                fileOutputStream.close();
                 JsonParser parser = new JsonParser();
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();
-
+            }
+            else
+            {
+                L.E(D,TAG, "response is not successful!");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-//       mOkHttpClient.setCookieHandler(new CookieManager(
-//                new PersistentCookieStore(getContext().getApplicationContext()),
-//                CookiePolicy.ACCEPT_ALL));
-
         return null;
     }
 

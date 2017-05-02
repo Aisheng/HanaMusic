@@ -246,7 +246,7 @@ public class MediaService extends Service {
     private static Handler mUrlHandler;
     private static Handler mLrcHandler;
     private MediaPlayerProxy mProxy;
-    public static final String LRC_PATH = "/remusic/lrc/";
+    public static final String LRC_PATH = "/hanamusic/lrc/";
     private long mLastSeekPos = 0;
     private RequestPlayUrl mRequestUrl;
     private RequestLrc mRequestLrc;
@@ -410,7 +410,7 @@ public class MediaService extends Service {
     }
 
     private void setUpMediaSession() {
-        mSession = new MediaSession(this, "remusic");
+        mSession = new MediaSession(this, "hanamusic");
         mSession.setCallback(new MediaSession.Callback() {
             @Override
             public void onPause() {
@@ -567,9 +567,9 @@ public class MediaService extends Service {
         } else if (SHUFFLE_ACTION.equals(action)) {
             cycleShuffle();
         } else if (TRY_GET_TRACKINFO.equals(action)) {
+            L.E(D,TAG,"Service received getLrcBroadcast------------------------------!");
             getLrc(mPlaylist.get(mPlayPos).mId);
         } else if (Intent.ACTION_SCREEN_OFF.equals(action) ){
-
             if(isPlaying() && !mIsLocked){
 //                Intent lockscreen = new Intent(this, LockActivity.class);
 //                lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -941,6 +941,7 @@ public class MediaService extends Service {
             }
             try {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchLrcPic(musicInfo.musicName, musicInfo.artist));
+                L.E(D,TAG,jsonObject.toString());
                 JsonArray array = jsonObject.get("songinfo").getAsJsonArray();
                 int len = array.size();
                 url = null;

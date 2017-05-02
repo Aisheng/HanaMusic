@@ -20,7 +20,6 @@ public class HandlerUtil extends Handler {
         }
         return instance;
 }
-
     HandlerUtil(Context context) {
         mActivityReference = new WeakReference<>(context);
     }
